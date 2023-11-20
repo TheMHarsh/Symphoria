@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Register
+{% endblock %}
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+                <div id = "flash_message">
+                    {{ messages[0] }}
+                </div>
+        {% endif %}
+    {% endwith %}
+
+    <a href="/">Symphoria</a>
+    <p>Sign Up to start listening</p>
+    <form action="#" method="post">
+        <input type="text" name="username" id="username" placeholder="Username" required>
+        <input type="text" name="name" id="name" placeholder="Name" required>
+        <input type="password" name="password" id="password" placeholder="Password" required>
+        <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
+        <label for="role">You are - </label>
+        <select name="role" id="role" required>
+            <option value="1">Creator</option>
+            <option value="2">Listener</option>
+        </select>
+        <input type="submit" value="Sign Up">
+    </form>
+
+    <a href="/login">Already have an account? Login here.</a>
+{% endblock %}

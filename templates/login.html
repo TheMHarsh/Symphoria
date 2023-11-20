@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Login
+{% endblock %}
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+                <div id = "flash_message">
+                    {{ messages[0] }}
+                </div>
+        {% endif %}
+    {% endwith %}
+    <a href="/">Symphoria</a>
+    <form action="#" method="post">
+        <input type="text" name="username" id="username" placeholder="Username">
+        <input type="password" name="password" id="password" placeholder="Password">
+        <input type="submit" value="Log In">
+    </form>
+
+    <a href="/signup">Don't have an account? Sign Up here.</a>
+{% endblock %}
