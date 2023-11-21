@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Profile
+{% endblock %}
+{% block content %}
+    <div class="navbar">
+        <a href="/">Symphoria</a>
+        <input type="text">
+        <a href="/login">Profile</a>
+        <a href="/logout">Logout</a>
+    </div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+                <div id = "flash_message">
+                    {{ messages[0] }}
+                </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="menubar">
+        <a href="/profile">Profile</a>
+        <a href='#'>Playlists</a>
+        <a href='#'>My Music</a>
+        <a href="#">My Albums</a>
+    </div>
+
+    <div class="profile_info">
+        <div class="profile_username">
+            <h1>Username : {{ user.username }}</h1>
+        </div>
+        <div class="profile_name">
+            <h1>Name : {{ user.name }}</h1>
+        </div>
+        <div class="change_password">
+            <form action="/change_password" method="POST">
+                <h1>Change Password</h1>
+                <input type="password" name="old_password" id="old_password" placeholder="Old Password">
+                <input type="password" name="new_password" id="new_password" placeholder="New Password">
+                <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password">
+                <input type="submit" id="change_password" value="Change Password">
+            </form>
+        </div>
+        <div class="role">
+            <h1>Role : {{ user.role }}</h1>
+            {% if user.role == 'Listener' %}
+                <a href="/become_creator">Become a creator</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
