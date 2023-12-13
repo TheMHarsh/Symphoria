@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+{% block title %}
+    My Playlists
+{% endblock %}
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <input type="text">
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="menubar">
+        <a href="/profile">Profile</a>
+        <a href='/my_playlists'>Playlists</a>
+        <a href='/my_songs'>My Songs</a>
+        <a href="/my_albums">My Albums</a>
+    </div>
+
+    <div class="info">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                    <div id = "flash_message">
+                        {{ messages[0] }}
+                    </div>
+            {% endif %}
+        {% endwith %}
+
+        <a href="#" class="add_playlists">Add Playlists</a>
+
+        <h1>Your Playlists</h1>
+        {% if playlists %}
+            {% for playlist in playlists %}
+                <div class="playlist_controls">
+                        <a href="#"><h3>{{ playlists.title }}</h3></a>
+                        <a href="#">Edit</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <h1>Nothing to show here</h1>
+        {% endif %}
+    </div>
+{% endblock %}

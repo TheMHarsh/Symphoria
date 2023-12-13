@@ -1,0 +1,64 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Edit {{ song.name }}
+{% endblock %}
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <input type="text">
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="menubar">
+        <a href="/profile">Profile</a>
+        <a href='/my_playlists'>Playlists</a>
+        <a href='/my_songs'>My Songs</a>
+        <a href="/my_albums">My Albums</a>
+    </div>
+
+    <div class="info">
+        <h1>Edit</h1>
+        <form action="/my_songs/edit/{{ song.id }}" method="POST" enctype="multipart/form-data">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" value="{{ song.name }}" required>
+
+            <label for="lyrics">Lyrics</label>
+            <textarea name="lyrics" id="lyrics" cols="30" rows="10">{{ song.lyrics }}</textarea>
+
+            <label for="genre">Select a Music Genre</label>
+            <select id="genre" name="genre" required>
+                <option value="pop" {% if song.genre == "pop" %} selected {% endif %}>Pop</option>
+                <option value="rock" {% if song.genre == "rock" %} selected {% endif %}>Rock</option>
+                <option value="hip-hop" {% if song.genre == "hip-hop" %} selected {% endif %}>Hip-Hop/Rap</option>
+                <option value="country" {% if song.genre == "country" %} selected {% endif %}>Country</option>
+                <option value="electronic" {% if song.genre == "electronic" %} selected {% endif %}>Electronic/Dance</option>
+                <option value="jazz" {% if song.genre == "jazz" %} selected {% endif %}>Jazz</option>
+                <option value="blues" {% if song.genre == "blues" %} selected {% endif %}>Blues</option>
+                <option value="rnb" {% if song.genre == "rnb" %} selected {% endif %}>R&B (Rhythm and Blues)</option>
+                <option value="reggae" {% if song.genre == "reggae" %} selected {% endif %}>Reggae</option>
+                <option value="classical" {% if song.genre == "classical" %} selected {% endif %}>Classical</option>
+                <option value="metal" {% if song.genre == "metal" %} selected {% endif %}>Heavy Metal</option>
+                <option value="indie" {% if song.genre == "indie" %} selected {% endif %}>Indie/Alternative</option>
+                <option value="folk" {% if song.genre == "folk" %} selected {% endif %}>Folk</option>
+                <option value="world" {% if song.genre == "world" %} selected {% endif %}>World Music</option>
+                <option value="gospel" {% if song.genre == "gospel" %} selected {% endif %}>Gospel</option>
+                <option value="punk" {% if song.genre == "punk" %} selected {% endif %}>Punk</option>
+                <option value="soul" {% if song.genre == "soul" %} selected {% endif %}>Soul</option>
+                <option value="funk" {% if song.genre == "funk" %} selected {% endif %}>Funk</option>
+                <option value="disco" {% if song.genre == "disco" %} selected {% endif %}>Disco</option>
+                <option value="bluegrass" {% if song.genre == "bluegrass" %} selected {% endif %}>Bluegrass</option>
+            </select>
+
+            <label for="thumbnail">Update Thumbnail</label>
+            <input type="file" name="thumbnail" id="thumbnail" accept=".jpg, .jpeg, .png">
+
+            <label for="audio">Update Audio</label>
+            <input type="file" name="audio" id="audio" accept=".mp3">
+
+            <a href="/my_songs/delete/{{ song.id }}">Delete Song</a>
+
+            <button type="submit">Update</button>
+        </form>
+    </div>
+{% endblock %}

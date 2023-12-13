@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+{% block title %}
+    My Music
+{% endblock %}
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <input type="text">
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="menubar">
+        <a href="/profile">Profile</a>
+        <a href='/my_playlists'>Playlists</a>
+        <a href='/my_songs'>My Songs</a>
+        <a href="/my_albums">My Albums</a>
+    </div>
+
+    {% if user.role == 'Creator' %}
+        {% endif %}
+        <div class="info">
+            {% if user.role == 'Creator' %}
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                            <div id = "flash_message">
+                                {{ messages[0] }}
+                            </div>
+                    {% endif %}
+                {% endwith %}
+
+                <div class="dashboard">
+                    <h1>Dashboard here</h1>
+                </div>
+
+                <a href="/my_songs/upload" class="add_songs">Add Songs</a>
+
+                <h1>Your Songs</h1>
+                {% if songs %}
+                    {% for song in songs %}
+                        <div class="song_controls">
+                                <a href="#"><h3>{{ song.name }}</h3></a>
+                                <a href="/my_songs/edit/{{ song.id }}">Edit</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <h1>Nothing to show here</h1>
+                {% endif %}
+        {% else %}
+            <h1>You need to be a Creator to add Songs</h1>
+        {% endif %}
+    </div>
+{% endblock %}

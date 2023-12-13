@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Edit - Add Song to Album
+{% endblock %}
+
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <input type="text">
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="menubar">
+        <a href="/profile">Profile</a>
+        <a href='/my_playlists'>Playlists</a>
+        <a href='/my_songs'>My Songs</a>
+        <a href="/my_albums">My Albums</a>
+    </div>
+
+    <div class="info">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                    <div id = "flash_message">
+                        {{ messages[0] }}
+                    </div>
+            {% endif %}
+        {% endwith %}
+
+        <h1>Add Song to Album</h1>
+
+        <form action="{{ url_for('edit_add_to_album', album_id=album_id) }}"  method="POST">
+            {% for song in songs %}
+                <input type="checkbox" name="song" value="{{ song.id }}">
+                <label for="song">{{ song.name }}</label><br>
+            {% endfor %}
+            <input type="submit" value="Add Song to Album">
+        </form>
+    </div>
+{% endblock %}

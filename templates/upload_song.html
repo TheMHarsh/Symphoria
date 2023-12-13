@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Upload
+{% endblock %}
+{% block internal_css %}
+    #lyrics {
+        height: 300px;
+        width: 500px;
+        overflow: scroll;
+        resize: none;
+{% endblock %}
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <input type="text">
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="menubar">
+        <a href="/profile">Profile</a>
+        <a href='/my_playlists'>Playlists</a>
+        <a href='/my_songs'>My Songs</a>
+        <a href="/my_albums">My Albums</a>
+    </div>
+
+    <div class="info">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                    <div id = "flash_message">
+                        {{ messages[0] }}
+                    </div>
+            {% endif %}
+        {% endwith %}
+
+    <form action="/my_songs/upload" method="post" enctype="multipart/form-data" id="form">
+            <label for="file">Title</label>
+            <input type="text" name="title" id="title" required>
+
+            <label for="genre">Select a Music Genre</label>
+            <select id="genre" name="genre" required>
+                <option value="" disabled selected>Select a genre</option>
+                <option value="pop">Pop</option>
+                <option value="rock">Rock</option>
+                <option value="hip-hop">Hip-Hop/Rap</option>
+                <option value="country">Country</option>
+                <option value="electronic">Electronic/Dance</option>
+                <option value="jazz">Jazz</option>
+                <option value="blues">Blues</option>
+                <option value="rnb">R&B (Rhythm and Blues)</option>
+                <option value="reggae">Reggae</option>
+                <option value="classical">Classical</option>
+                <option value="metal">Heavy Metal</option>
+                <option value="indie">Indie/Alternative</option>
+                <option value="folk">Folk</option>
+                <option value="world">World Music</option>
+                <option value="gospel">Gospel</option>
+                <option value="punk">Punk</option>
+                <option value="soul">Soul</option>
+                <option value="funk">Funk</option>
+                <option value="disco">Disco</option>
+                <option value="bluegrass">Bluegrass</option>
+            </select>
+
+            <label for="lyrics">Lyrics</label>
+            <textarea name="lyrics" id="lyrics" rows="4" cols="50"></textarea>
+
+            <label for="thumbnail">Upload Thumbnail</label>
+            <input type="file" name="thumbnail" id="thumbnail" accept=".jpg, .jpeg, .png" required>
+
+            <label for="audio">Upload Audio</label>
+            <input type="file" name="audio" id="audio" accept=".mp3" required>
+
+            <input type="submit" value="Upload" name="submit">
+        </form>
+    </div>
+{% endblock %}
