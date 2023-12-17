@@ -2,14 +2,56 @@
 {% block title %}
     Profile
 {% endblock %}
+{% block internal_css %}
+
+    .info h1{
+        font-size: 20px;
+    }
+    .info form{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: left;
+        margin-top: 0;
+        margin-bottom: 20px;
+        width: 80%;
+        height: 100%;
+    }
+    .info form input{
+        width: 50%;
+        height: 30px;
+        margin-bottom: 10px;
+    }
+    .change_password{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: left;
+        margin-top: 0;
+        margin-bottom: 20px;
+        width: 80%;
+        height: 100%;
+    }
+{% endblock %}
 {% block content %}
-    <nav class="navbar">
+        <nav class="navbar">
         <a href="/">Symphoria</a>
-        <input type="text">
+        <form action="/search" method="POST">
+            {% if session['search'] %}
+                <input type="text" name="search" value="{{ session['search'] }}">
+            {% else %}
+                <input type="text" name="search" value="">
+            {% endif %}
+            <button type="submit"><img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt=""></button>
+        </form>
         <a href="/profile">Profile</a>
+        {% if Admin.query.filter_by(id=session['user_id']).first() %}
+            <a href="/admin">Admin</a>
+        {% endif %}
         <a href="/logout">Logout</a>
     </nav>
 
+    <div class="content-container">
     <div class="menubar">
         <a href="/profile">Profile</a>
         <a href='/my_playlists'>Playlists</a>
@@ -17,7 +59,7 @@
         <a href="/my_albums">My Albums</a>
     </div>
 
-    <div class="profile_info">
+    <div class="info">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                     <div id = "flash_message">
@@ -32,6 +74,12 @@
         <div class="profile_name">
             <h1>Name : {{ user.name }}</h1>
         </div>
+        <div class="role">
+            <h1>Role : {{ user.role }}</h1>
+            {% if user.role == 'Listener' %}
+                <a href="/become_creator">Become a creator</a>
+            {% endif %}
+        </div>
         <div class="change_password">
             <form action="/change_password" method="POST">
                 <h1>Change Password</h1>
@@ -41,11 +89,6 @@
                 <input type="submit" id="change_password" value="Change Password">
             </form>
         </div>
-        <div class="role">
-            <h1>Role : {{ user.role }}</h1>
-            {% if user.role == 'Listener' %}
-                <a href="/become_creator">Become a creator</a>
-            {% endif %}
-        </div>
+    </div>
     </div>
 {% endblock %}

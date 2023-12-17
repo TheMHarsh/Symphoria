@@ -2,15 +2,42 @@
 {% block title %}
     {{ playlist.name }} Songs
 {% endblock %}
-
+{% block internal_css %}
+    .song{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100px;
+        height: 100px;
+        margin: 10px 10px 10px 10px;
+        padding : 10px 10px 10px 10px;
+        border: 1px solid #1c1c1c;
+        border-radius: 10px;
+        background-color: #ADD8E6;
+    }
+    .playlist_controls a{
+        text-decoration: none;
+        color: #1c1c1c;
+    }
+{% endblock %}
 {% block content %}
-    <nav class="navbar">
+        <nav class="navbar">
         <a href="/">Symphoria</a>
-        <input type="text">
+        <form action="/search" method="POST">
+            {% if session['search'] %}
+                <input type="text" name="search" value="{{ session['search'] }}">
+            {% else %}
+                <input type="text" name="search" value="">
+            {% endif %}
+            <button type="submit"><img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt=""></button>
+        </form>
         <a href="/profile">Profile</a>
+        {% if Admin.query.filter_by(id=session['user_id']).first() %}
+            <a href="/admin">Admin</a>
+        {% endif %}
         <a href="/logout">Logout</a>
     </nav>
-
+    <div class="content-container">
     <div class="menubar">
         <a href="/profile">Profile</a>
         <a href='/my_playlists'>Playlists</a>
@@ -30,10 +57,12 @@
         <h1>{{ playlist.name }} Songs</h1>
         {% for song in songs %}
             <div class="song">
-                <a href="#">{{ song.name }}</a>
+                <a href="/song/{{ song.id }}">{{ song.name }}</a>
+                {{ song.artist.name }}
                 <a href="/my_playlists/{{ playlist.id }}/remove_song/{{ song.id }}">Remove</a>
             </div>
         {% endfor %}
 
+    </div>
     </div>
 {% endblock %}

@@ -2,14 +2,27 @@
 {% block title %}
     Edit {{ playlist.name }}
 {% endblock %}
+
+
+
 {% block content %}
-    <nav class="navbar">
+        <nav class="navbar">
         <a href="/">Symphoria</a>
-        <input type="text">
+        <form action="/search" method="POST">
+            {% if session['search'] %}
+                <input type="text" name="search" value="{{ session['search'] }}">
+            {% else %}
+                <input type="text" name="search" value="">
+            {% endif %}
+            <button type="submit"><img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt=""></button>
+        </form>
         <a href="/profile">Profile</a>
+        {% if Admin.query.filter_by(id=session['user_id']).first() %}
+            <a href="/admin">Admin</a>
+        {% endif %}
         <a href="/logout">Logout</a>
     </nav>
-
+    <div class="content-container">
     <div class="menubar">
         <a href="/profile">Profile</a>
         <a href='/my_playlists'>Playlists</a>
@@ -19,16 +32,17 @@
 
     <div class="info">
         <h1>Edit</h1>
-        <form action="/my_playlists/edit/{{ playlist.id }}" method="POST">
+        <form action="/my_playlists/edit/{{ playlist.id }}" method="POST" class="formy">
             <label for="title">Title</label>
             <input type="text" name="title" id="title" value="{{ playlist.name }}" required>
 
-            <a href="/my_playlists/edit/{{ playlist.id }}/add_song">Add Songs to Albums</a>
-            <a href="/my_playlists/edit/{{ playlist.id }}/remove_song">Remove Songs from Albums</a>
+            <a href="/my_playlists/edit/{{ playlist.id }}/add_song">Add Songs to Playlists</a>
+            <a href="/my_playlists/edit/{{ playlist.id }}/remove_song">Remove Songs from Playlists</a>
 
-            <a href="/my_playlists/delete/{{ playlist.id }}">Delete Album</a>
+            <a href="/my_playlists/delete/{{ playlist.id }}">Delete Playlist</a>
 
             <button type="submit">Update</button>
         </form>
+    </div>
     </div>
 {% endblock %}

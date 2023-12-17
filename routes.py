@@ -39,7 +39,7 @@ def index():
 @app.route('/signup', methods = ['POST','GET'])
 def signup():
     if 'user_id' in session:
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
     else:
         if request.method == 'POST':
             username = request.form.get('username')
@@ -74,7 +74,7 @@ def signup():
 @app.route('/login', methods = ['POST','GET'])
 def login():
     if 'user_id' in session:
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
     else:
         if request.method == 'POST':
             username = request.form.get('username')
@@ -88,7 +88,7 @@ def login():
                 return redirect(url_for('login'))
             else:
                 session['user_id'] = user.id
-                return redirect(url_for('index'))
+                return redirect(url_for('index', Admin=Admin))
         else:
             return render_template('login.html')
 
@@ -106,7 +106,7 @@ def profile():
     else:
 
         user = User.query.filter_by(id=session['user_id']).first()
-        return render_template('profile.html', user=user)
+        return render_template('profile.html', user=user, Admin=Admin)
 
 @app.route('/change_password', methods = ['GET','POST'])
 @is_blacklist
@@ -121,18 +121,18 @@ def change_password():
 
         if not user.verify_password(old_password):
             flash('Incorrect password', 'error')
-            return redirect(url_for('profile'))
+            return redirect(url_for('profile', Admin=Admin))
 
         new_password = request.form.get('new_password')
         confirm_password = request.form.get('confirm_password')
         if new_password != confirm_password:
             flash('Passwords do not match', 'error')
-            return redirect(url_for('profile'))
+            return redirect(url_for('profile', Admin=Admin))
 
         user.password = new_password
         db.session.commit()
         flash('Password changed', 'info')
-        return redirect(url_for('profile'))
+        return redirect(url_for('profile', Admin=Admin))
 
 @app.route('/become_creator', methods=['GET','POST'])
 @is_blacklist
@@ -146,7 +146,7 @@ def become_creator():
         user.role = 'Creator'
         db.session.commit()
         flash('You are now a creator', 'info')
-        return redirect(url_for('profile'))
+        return redirect(url_for('profile', Admin=Admin))
 
 @app.route('/my_songs')
 @is_blacklist
@@ -158,7 +158,7 @@ def my_songs():
 
         user = User.query.filter_by(id=session['user_id']).first()
         songs = Song.query.filter_by(artist_id=user.id).all()
-        return render_template('my_songs.html', user=user, songs=songs)
+        return render_template('my_songs.html', user=user, songs=songs, Admin=Admin)
 
 @app.route('/my_albums')
 @is_blacklist
@@ -170,7 +170,7 @@ def my_albums():
 
         user = User.query.filter_by(id=session['user_id']).first()
         albums = Album.query.filter_by(artist_id=user.id).all()
-        return render_template('my_albums.html', user=user, albums=albums)
+        return render_template('my_albums.html', user=user, albums=albums, Admin=Admin)
 
 @app.route('/my_playlists')
 @is_blacklist
@@ -182,7 +182,7 @@ def my_playlists():
 
         user = User.query.filter_by(id=session['user_id']).first()
         playlists = Playlist.query.filter_by(user_id=user.id).all()
-        return render_template('my_playlists.html', user=user, playlists=playlists)
+        return render_template('my_playlists.html', user=user, playlists=playlists, Admin=Admin)
 
 @app.route('/my_songs/upload', methods=['GET','POST'])
 @is_blacklist
@@ -193,7 +193,7 @@ def upload_song():
 
     elif User.query.filter_by(id=session['user_id']).first().role != 'Creator':
         flash('You must be a creator to upload songs', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
     else:
 
         if request.method == 'POST':
@@ -206,15 +206,15 @@ def upload_song():
 
             if title == '' or genre == '' or thumbnail.filename == '' or audio.filename == '':
                 flash('Please fill out all fields', 'info')
-                return redirect(url_for('upload_song'))
+                return redirect(url_for('upload_song', Admin=Admin))
 
             if thumbnail.filename.split('.')[-1] not in ['jpg', 'jpeg', 'png']:
                 flash('Thumbnail must be a jpg, jpeg, or png file', 'info')
-                return redirect(url_for('upload_song'))
+                return redirect(url_for('upload_song', Admin=Admin))
 
             if audio.filename.split('.')[-1] not in ['mp3']:
                 flash('Audio must be a mp3 file', 'info')
-                return redirect(url_for('upload_song'))
+                return redirect(url_for('upload_song', Admin=Admin))
 
             if not os.path.exists(app.config['UPLOAD_FOLDER_SONG_THUMBNAIL']):
                 os.makedirs(app.config['UPLOAD_FOLDER_SONG_THUMBNAIL'])
@@ -224,11 +224,11 @@ def upload_song():
 
             if thumbnail.content_length > MAX_FILE_SIZE:
                 flash('Thumbnail must be less than 10 MB', 'info')
-                return redirect(url_for('upload_song'))
+                return redirect(url_for('upload_song', Admin=Admin))
 
             if audio.content_length > MAX_FILE_SIZE:
                 flash('Audio must be less than 10 MB', 'info')
-                return redirect(url_for('upload_song'))
+                return redirect(url_for('upload_song', Admin=Admin))
 
             thumbnail_filename = secure_filename(thumbnail.filename)
             audio_filename = secure_filename(audio.filename)
@@ -263,9 +263,9 @@ def upload_song():
             db.session.commit()
 
             flash('Song uploaded', 'info')
-            return redirect(url_for('my_songs'))
+            return redirect(url_for('my_songs', Admin=Admin))
         else:
-            return render_template('upload_song.html')
+            return render_template('upload_song.html', Admin=Admin)
 
 @app.route('/my_songs/edit/<song_id>', methods=['GET','POST'])
 @is_blacklist
@@ -278,7 +278,7 @@ def edit_song(song_id):
 
     if session['user_id'] != Song.query.filter_by(id=song_id).first().artist_id:
         flash('You are not authorized to edit this song', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     if request.method == 'POST':
         title = request.form.get('title')
@@ -289,7 +289,7 @@ def edit_song(song_id):
 
         if title == '' or genre == '':
             flash("Title and Genre can't be empty", 'info')
-            return redirect(url_for('edit_song', song_id=song_id))
+            return redirect(url_for('edit_song', song_id=song_id, Admin=Admin))
 
         song = Song.query.filter_by(id=song_id).first()
         song.name = title
@@ -300,11 +300,11 @@ def edit_song(song_id):
         if thumbnail.filename != '':
             if thumbnail.filename.split('.')[-1] not in ['jpg', 'jpeg', 'png']:
                 flash('Thumbnail must be a jpg, jpeg, or png file', 'info')
-                return redirect(url_for('edit_song', song_id=song_id))
+                return redirect(url_for('edit_song', song_id=song_id, Admin=Admin))
 
             if thumbnail.content_length > MAX_FILE_SIZE:
                 flash('Thumbnail must be less than 10 MB', 'info')
-                return redirect(url_for('edit_song', song_id=song_id))
+                return redirect(url_for('edit_song', song_id=song_id, Admin=Admin))
 
 
             os.remove(os.path.join(app.config['UPLOAD_FOLDER_SONG_THUMBNAIL'], song.thumbnail))
@@ -318,11 +318,11 @@ def edit_song(song_id):
         if audio.filename != '':
             if audio.filename.split('.')[-1] not in ['mp3']:
                 flash('Audio must be a mp3 file', 'info')
-                return redirect(url_for('edit_song', song_id=song_id))
+                return redirect(url_for('edit_song', song_id=song_id, Admin=Admin))
 
             if audio.content_length > MAX_FILE_SIZE:
                 flash('Audio must be less than 10 MB', 'info')
-                return redirect(url_for('edit_song', song_id=song_id))
+                return redirect(url_for('edit_song', song_id=song_id, Admin=Admin))
 
             os.remove(os.path.join(app.config['UPLOAD_FOLDER_AUDIO'], song.music_src))
 
@@ -333,11 +333,11 @@ def edit_song(song_id):
             db.session.commit()
 
         flash('Song updated', 'info')
-        return redirect(url_for('my_songs'))
+        return redirect(url_for('my_songs', Admin=Admin))
 
     else:
         song = Song.query.filter_by(id=song_id).first()
-        return render_template('edit_song.html', song=song)
+        return render_template('edit_song.html', song=song, Admin=Admin)
 
 @app.route('/my_songs/delete/<song_id>')
 @is_blacklist
@@ -348,7 +348,7 @@ def delete_song(song_id):
 
     if session['user_id'] != Song.query.filter_by(id=song_id).first().artist_id:
         flash('You are not authorized to delete this song', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     song = Song.query.filter_by(id=song_id).first()
     os.remove(os.path.join(app.config['UPLOAD_FOLDER_SONG_THUMBNAIL'], song.thumbnail))
@@ -356,7 +356,7 @@ def delete_song(song_id):
     db.session.delete(song)
     db.session.commit()
     flash('Song deleted', 'info')
-    return redirect(url_for('my_songs'))
+    return redirect(url_for('my_songs', Admin=Admin))
 
 @app.route('/my_albums/create', methods=['GET','POST'])
 @is_blacklist
@@ -366,7 +366,7 @@ def create_album():
         return redirect(url_for('login'))
     if User.query.filter_by(id=session['user_id']).first().role != 'Creator':
         flash('You must be a creator to create albums', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
     else:
 
         if request.method == 'POST':
@@ -378,18 +378,18 @@ def create_album():
 
             if album_name == '' or genre == '' or thumbnail.filename == '':
                 flash('Please fill out all fields', 'info')
-                return redirect(url_for('create_album'))
+                return redirect(url_for('create_album', Admin=Admin))
 
             if thumbnail.filename.split('.')[-1] not in ['jpg', 'jpeg', 'png']:
                 flash('Thumbnail must be a jpg, jpeg, or png file', 'info')
-                return redirect(url_for('upload_album'))
+                return redirect(url_for('upload_album', Admin=Admin))
 
             if not os.path.exists(app.config['UPLOAD_FOLDER_ALBUM_THUMBNAIL']):
                 os.makedirs(app.config['UPLOAD_FOLDER_ALBUM_THUMBNAIL'])
 
             if thumbnail.content_length > MAX_FILE_SIZE:
                 flash('Thumbnail must be less than 10 MB', 'info')
-                return redirect(url_for('upload_album'))
+                return redirect(url_for('upload_album', Admin=Admin))
 
             thumbnail_filename = secure_filename(thumbnail.filename)
 
@@ -415,10 +415,10 @@ def create_album():
             album.thumbnail = thumbnail_filename
             db.session.commit()
 
-            return redirect(url_for('add_song_to_album', album_id=album_id))
+            return redirect(url_for('add_song_to_album', album_id=album_id, Admin=Admin))
 
         else:
-            return render_template('create_album.html')
+            return render_template('create_album.html', Admin=Admin)
 
 @app.route('/my_albums/create/<album_id>', methods=['GET','POST'])
 @is_blacklist
@@ -428,7 +428,7 @@ def add_song_to_album(album_id):
         return redirect(url_for('login'))
     if User.query.filter_by(id=session['user_id']).first().role != 'Creator':
         flash('You must be a creator to add songs to albums', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
     else:
 
         if request.method == 'POST':
@@ -440,11 +440,11 @@ def add_song_to_album(album_id):
             db.session.commit()
 
             flash('Song added to album', 'info')
-            return redirect(url_for('my_albums'))
+            return redirect(url_for('my_albums', Admin=Admin))
         else:
             user = User.query.filter_by(id=session['user_id']).first()
             songs = Song.query.filter_by(artist_id=user.id).all()
-            return render_template('add_song_to_album.html',album_id=album_id, songs=songs)
+            return render_template('add_song_to_album.html',album_id=album_id, songs=songs, Admin=Admin)
 
 @app.route('/my_albums/edit/<album_id>', methods=['GET','POST'])
 @is_blacklist
@@ -455,7 +455,7 @@ def edit_album(album_id):
 
     if session['user_id'] != Album.query.filter_by(id=album_id).first().artist_id:
         flash('You are not authorized to edit this album', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     if request.method == 'POST':
         album_name = request.form.get('title')
@@ -464,7 +464,7 @@ def edit_album(album_id):
 
         if album_name == '' or genre == '':
             flash("Title and Genre can't be empty", 'info')
-            return redirect(url_for('edit_album', album_id=album_id))
+            return redirect(url_for('edit_album', album_id=album_id, Admin=Admin))
 
         album = Album.query.filter_by(id=album_id).first()
         album.name = album_name
@@ -474,11 +474,11 @@ def edit_album(album_id):
         if thumbnail.filename != '':
             if thumbnail.filename.split('.')[-1] not in ['jpg', 'jpeg', 'png']:
                 flash('Thumbnail must be a jpg, jpeg, or png file', 'info')
-                return redirect(url_for('edit_album', album_id=album_id))
+                return redirect(url_for('edit_album', album_id=album_id, Admin=Admin))
 
             if thumbnail.content_length > MAX_FILE_SIZE:
                 flash('Thumbnail must be less than 10 MB', 'info')
-                return redirect(url_for('edit_album', album_id=album_id))
+                return redirect(url_for('edit_album', album_id=album_id, Admin=Admin))
 
             os.remove(os.path.join(app.config['UPLOAD_FOLDER_ALBUM_THUMBNAIL'], album.thumbnail))
 
@@ -489,11 +489,11 @@ def edit_album(album_id):
             db.session.commit()
 
         flash('Album updated', 'info')
-        return redirect(url_for('my_albums'))
+        return redirect(url_for('my_albums', Admin=Admin))
 
     else:
         album = Album.query.filter_by(id=album_id).first()
-        return render_template('edit_album.html', album=album)
+        return render_template('edit_album.html', album=album, Admin=Admin)
 
 @app.route('/my_albums/edit/<album_id>/add_song', methods=['GET','POST'])
 @is_blacklist
@@ -504,7 +504,7 @@ def edit_add_to_album(album_id):
 
     if session['user_id'] != Album.query.filter_by(id=album_id).first().artist_id:
         flash('You are not authorized to edit this album', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     if request.method == 'POST':
         album_songs = request.form.getlist('song')
@@ -515,7 +515,7 @@ def edit_add_to_album(album_id):
         db.session.commit()
 
         flash('Songs added to album', 'info')
-        return redirect(url_for('my_albums'))
+        return redirect(url_for('my_albums', Admin=Admin))
 
     else:
         user = User.query.filter_by(id=session['user_id']).first()
@@ -525,7 +525,7 @@ def edit_add_to_album(album_id):
             album_song = AlbumSong.query.filter_by(album_id=album_id, song_id=song.id).first()
             if album_song is None:
                 song_list.append(song)
-        return render_template('edit_add_to_album.html',album_id=album_id, songs=song_list)
+        return render_template('edit_add_to_album.html',album_id=album_id, songs=song_list, Admin=Admin)
 
 @app.route('/my_albums/edit/<album_id>/remove_song', methods=['GET','POST'])
 @is_blacklist
@@ -536,7 +536,7 @@ def edit_remove_from_album(album_id):
 
     if session['user_id'] != Album.query.filter_by(id=album_id).first().artist_id:
         flash('You are not authorized to edit this album', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     if request.method == 'POST':
         album_songs = request.form.getlist('song')
@@ -547,7 +547,7 @@ def edit_remove_from_album(album_id):
         db.session.commit()
 
         flash('Songs removed from album', 'info')
-        return redirect(url_for('my_albums'))
+        return redirect(url_for('my_albums', Admin=Admin))
 
     else:
         user = User.query.filter_by(id=session['user_id']).first()
@@ -557,7 +557,7 @@ def edit_remove_from_album(album_id):
             album_song = AlbumSong.query.filter_by(album_id=album_id, song_id=song.id).first()
             if album_song is not None:
                 song_list.append(song)
-        return render_template('edit_remove_from_album.html',album_id=album_id, songs=song_list)
+        return render_template('edit_remove_from_album.html', Admin=Admin,album_id=album_id, songs=song_list)
 
 @app.route('/my_albums/delete/<album_id>')
 @is_blacklist
@@ -568,7 +568,7 @@ def delete_album(album_id):
 
     if session['user_id'] != Album.query.filter_by(id=album_id).first().artist_id:
         flash('You are not authorized to delete this album', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     album = Album.query.filter_by(id=album_id).first()
     os.remove(os.path.join(app.config['UPLOAD_FOLDER_ALBUM_THUMBNAIL'], album.thumbnail))
@@ -578,7 +578,7 @@ def delete_album(album_id):
         db.session.delete(album_song)
     db.session.commit()
     flash('Album deleted', 'info')
-    return redirect(url_for('my_albums'))
+    return redirect(url_for('my_albums', Admin=Admin))
 
 @app.route('/my_albums/<album_id>')
 @is_blacklist
@@ -589,14 +589,14 @@ def my_albums_view(album_id):
 
     if session['user_id'] != Album.query.filter_by(id=album_id).first().artist_id:
         flash('You are not authorized to enter this page', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     album = Album.query.filter_by(id=album_id).first()
     songs = AlbumSong.query.filter_by(album_id=album_id).all()
     song_list = []
     for song in songs:
         song_list.append(Song.query.filter_by(id=song.song_id).first())
-    return render_template('my_albums_view.html', album=album, songs=song_list)
+    return render_template('my_albums_view.html', Admin=Admin, album=album, songs=song_list)
 
 @app.route('/album/<album_id>')
 @is_blacklist
@@ -610,25 +610,25 @@ def album_view(album_id):
     song_list = []
     for song in songs:
         song_list.append(Song.query.filter_by(id=song.song_id).first())
-    return render_template('album_view.html', album=album, songs=song_list)
+    return render_template('album_view.html', Admin=Admin, album=album, songs=song_list)
 
 @app.route('/my_albums/<album_id>/remove_song/<song_id>')
 @is_blacklist
 def my_albums_remove_song(album_id, song_id):
     if 'user_id' not in session:
         flash('Please log in', 'info')
-        return redirect(url_for('login'))
+        return redirect(url_for('login', Admin=Admin))
 
 
     if session['user_id'] != Album.query.filter_by(id=album_id).first().artist_id:
         flash('You are not authorized to remove songs from this album', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     album_song = AlbumSong.query.filter_by(album_id=album_id, song_id=song_id).first()
     db.session.delete(album_song)
     db.session.commit()
     flash('Song removed from album', 'info')
-    return redirect(url_for('my_albums_view', album_id=album_id))
+    return redirect(url_for('my_albums_view', album_id=album_id, Admin=Admin))
 
 
 
@@ -647,7 +647,7 @@ def create_playlist():
 
             if playlist_name == '':
                 flash('Please fill out all fields', 'info')
-                return redirect(url_for('create_playlist'))
+                return redirect(url_for('create_playlist', Admin=Admin))
 
             playlist = Playlist(
                 name=playlist_name,
@@ -656,10 +656,10 @@ def create_playlist():
             db.session.add(playlist)
             db.session.commit()
 
-            return redirect(url_for('add_song_to_playlist', playlist_id=playlist.id))
+            return redirect(url_for('add_song_to_playlist', playlist_id=playlist.id, Admin=Admin))
 
         else:
-            return render_template('create_playlist.html')
+            return render_template('create_playlist.html', Admin=Admin)
 
 @app.route('/my_playlists/create/<playlist_id>', methods=['GET','POST'])
 @is_blacklist
@@ -679,10 +679,10 @@ def add_song_to_playlist(playlist_id):
             db.session.commit()
 
             flash('Song added to playlist', 'info')
-            return redirect(url_for('my_playlists'))
+            return redirect(url_for('my_playlists', Admin=Admin))
         else:
             songs = Song.query.all()
-            return render_template('add_song_to_playlist.html',playlist_id=playlist_id, songs=songs)
+            return render_template('add_song_to_playlist.html', Admin=Admin,playlist_id=playlist_id, songs=songs)
 
 @app.route('/my_playlists/edit/<playlist_id>', methods=['GET','POST'])
 @is_blacklist
@@ -694,25 +694,25 @@ def edit_playlist(playlist_id):
 
     if session['user_id'] != Playlist.query.filter_by(id=playlist_id).first().user_id:
         flash('You are not authorized to edit this playlist', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     if request.method == 'POST':
         playlist_name = request.form.get('title')
 
         if playlist_name == '':
             flash("Title can't be empty", 'info')
-            return redirect(url_for('edit_playlist', playlist_id=playlist_id))
+            return redirect(url_for('edit_playlist', Admin=Admin, playlist_id=playlist_id))
 
         playlist = Playlist.query.filter_by(id=playlist_id).first()
         playlist.name = playlist_name
         db.session.commit()
 
         flash('Playlist updated', 'info')
-        return redirect(url_for('my_playlists'))
+        return redirect(url_for('my_playlists', Admin=Admin))
 
     else:
         playlist = Playlist.query.filter_by(id=playlist_id).first()
-        return render_template('edit_playlist.html', playlist=playlist)
+        return render_template('edit_playlist.html', Admin=Admin, playlist=playlist)
 
 @app.route('/my_playlists/edit/<playlist_id>/add_song', methods=['GET','POST'])
 @is_blacklist
@@ -724,7 +724,7 @@ def edit_add_to_playlist(playlist_id):
 
     if session['user_id'] != Playlist.query.filter_by(id=playlist_id).first().user_id:
         flash('You are not authorized to edit this playlist', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     if request.method == 'POST':
         playlist_songs = request.form.getlist('song')
@@ -735,7 +735,7 @@ def edit_add_to_playlist(playlist_id):
         db.session.commit()
 
         flash('Songs added to playlist', 'info')
-        return redirect(url_for('my_playlists'))
+        return redirect(url_for('my_playlists', Admin=Admin))
 
     else:
         songs = Song.query.all()
@@ -744,7 +744,7 @@ def edit_add_to_playlist(playlist_id):
             playlist_song = PlaylistSong.query.filter_by(playlist_id=playlist_id, song_id=song.id).first()
             if playlist_song is None:
                 song_list.append(song)
-        return render_template('edit_add_to_playlist.html',playlist_id=playlist_id, songs=song_list)
+        return render_template('edit_add_to_playlist.html', Admin=Admin,playlist_id=playlist_id, songs=song_list)
 
 @app.route('/my_playlists/edit/<playlist_id>/remove_song', methods=['GET','POST'])
 @is_blacklist
@@ -756,7 +756,7 @@ def edit_remove_from_playlist(playlist_id):
 
     if session['user_id'] != Playlist.query.filter_by(id=playlist_id).first().user_id:
         flash('You are not authorized to edit this playlist', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     if request.method == 'POST':
         playlist_songs = request.form.getlist('song')
@@ -767,7 +767,7 @@ def edit_remove_from_playlist(playlist_id):
         db.session.commit()
 
         flash('Songs removed from playlist', 'info')
-        return redirect(url_for('my_playlists'))
+        return redirect(url_for('my_playlists', Admin=Admin))
 
     else:
         songs = Song.query.all()
@@ -776,7 +776,7 @@ def edit_remove_from_playlist(playlist_id):
             playlist_song = PlaylistSong.query.filter_by(playlist_id=playlist_id, song_id=song.id).first()
             if playlist_song is not None:
                 song_list.append(song)
-        return render_template('edit_remove_from_playlist.html',playlist_id=playlist_id, songs=song_list)
+        return render_template('edit_remove_from_playlist.html', Admin=Admin,playlist_id=playlist_id, songs=song_list)
 
 @app.route('/my_playlists/delete/<playlist_id>')
 @is_blacklist
@@ -788,7 +788,7 @@ def delete_playlist(playlist_id):
 
     if session['user_id'] != Playlist.query.filter_by(id=playlist_id).first().user_id:
         flash('You are not authorized to delete this playlist', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     playlist = Playlist.query.filter_by(id=playlist_id).first()
     playlist_songs = PlaylistSong.query.filter_by(playlist_id=playlist_id).all()
@@ -797,7 +797,7 @@ def delete_playlist(playlist_id):
         db.session.delete(playlist_song)
     db.session.commit()
     flash('Playlist deleted', 'info')
-    return redirect(url_for('my_playlists'))
+    return redirect(url_for('my_playlists', Admin=Admin))
 
 @app.route('/my_playlists/<playlist_id>')
 @is_blacklist
@@ -809,14 +809,14 @@ def my_playlists_view(playlist_id):
 
     if session['user_id'] != Playlist.query.filter_by(id=playlist_id).first().user_id:
         flash('You are not authorized to enter this page', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     playlist = Playlist.query.filter_by(id=playlist_id).first()
     songs = PlaylistSong.query.filter_by(playlist_id=playlist_id).all()
     song_list = []
     for song in songs:
         song_list.append(Song.query.filter_by(id=song.song_id).first())
-    return render_template('my_playlists_view.html', playlist=playlist, songs=song_list)
+    return render_template('my_playlists_view.html', playlist=playlist, songs=song_list, Admin=Admin)
 
 @app.route('/my_playlists/<playlist_id>/remove_song/<song_id>')
 @is_blacklist
@@ -825,16 +825,15 @@ def my_playlists_remove_song(playlist_id, song_id):
         flash('Please log in', 'info')
         return redirect(url_for('login'))
 
-
     if session['user_id'] != Playlist.query.filter_by(id=playlist_id).first().user_id:
         flash('You are not authorized to remove songs from this playlist', 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('index', Admin=Admin))
 
     playlist_song = PlaylistSong.query.filter_by(playlist_id=playlist_id, song_id=song_id).first()
     db.session.delete(playlist_song)
     db.session.commit()
     flash('Song removed from playlist', 'info')
-    return redirect(url_for('my_playlists_view', playlist_id=playlist_id))
+    return redirect(url_for('my_playlists_view', playlist_id=playlist_id, Admin=Admin))
 
 @app.route('/song/<song_id>')
 @is_blacklist
@@ -844,7 +843,7 @@ def song_view(song_id):
         return redirect(url_for('login'))
 
     song = Song.query.filter_by(id=song_id).first()
-    return render_template('song_view.html', song=song)
+    return render_template('song_view.html', song=song, Admin=Admin)
 
 @app.route('/song/<song_id>/rate', methods=['GET','POST'])
 @is_blacklist
@@ -863,16 +862,16 @@ def rate_song(song_id):
                 old_rating.rating_value = new_rating
                 db.session.commit()
                 flash('Song rated', 'info')
-                return redirect(url_for('song_view', song_id=song_id))
+                return redirect(url_for('song_view', song_id=song_id, Admin=Admin))
             rating = Rating(song_id=song.id, user_id=user.id, rating_value=new_rating)
             db.session.add(rating)
             db.session.commit()
             flash('Song rated', 'info')
-            return redirect(url_for('song_view', song_id=song_id))
+            return redirect(url_for('song_view', song_id=song_id, Admin=Admin))
         else:
             song = Song.query.filter_by(id=song_id).first()
             rating = Rating.query.filter_by(song_id=song_id, user_id=session['user_id']).first()
-            return render_template('rate_song.html', song=song, rating=rating)
+            return render_template('rate_song.html', song=song, rating=rating, Admin=Admin)
 
 @app.route('/search', methods=['GET','POST'])
 @is_blacklist
@@ -884,7 +883,7 @@ def search():
         session['s_genre'] = 'All'
         songs = Song.query.filter(Song.name.like(f'%{search}%') ).all()
         albums = Album.query.filter(Album.name.like(f'%{search}%')).all()
-        return render_template('search.html', songs=songs, albums=albums)
+        return render_template('search.html', songs=songs, albums=albums, Admin=Admin)
     else:
         return render_template('search.html')
 
@@ -909,13 +908,13 @@ def filter():
                 songs = Song.query.filter(Song.name.like(f'%{search}%')).all()
             else:
                 songs = Song.query.filter(Song.name.like(f'%{search}%'), Song.genre.like(f'%{genre}%')).all()
-            return render_template('search.html', songs=songs, albums=[])
+            return render_template('search.html', songs=songs, albums=[], Admin=Admin)
         elif type == 'album':
             if genre == 'All':
                 albums = Album.query.filter(Album.name.like(f'%{search}%')).all()
             else:
                 albums = Album.query.filter(Album.name.like(f'%{search}%'), Album.genre.like(f'%{genre}%')).all()
-            return render_template('search.html', songs=[], albums=albums)
+            return render_template('search.html', songs=[], albums=albums, Admin=Admin)
         else:
             if genre == 'All':
                 songs = Song.query.filter(Song.name.like(f'%{search}%')).all()
@@ -923,9 +922,9 @@ def filter():
             else:
                 songs = Song.query.filter(Song.name.like(f'%{search}%'), Song.genre.like(f'%{genre}%')).all()
                 albums = Album.query.filter(Album.name.like(f'%{search}%'), Album.genre.like(f'%{genre}%')).all()
-            return render_template('search.html', songs=songs, albums=albums)
+            return render_template('search.html', songs=songs, albums=albums, Admin=Admin)
     else:
-        return render_template('search.html')
+        return render_template('search.html', Admin=Admin)
 
 @app.route('/admin_login', methods = ['POST','GET'])
 def admin_login():
@@ -946,7 +945,7 @@ def admin_login():
                 return redirect(url_for('admin_login'))
             else:
                 session['user_id'] = admin.id
-                return redirect(url_for('admin'))
+                return redirect(url_for('admin', Admin=Admin))
         else:
             return render_template('admin_login.html')
 
@@ -1008,7 +1007,7 @@ def song_management():
             session['song_search_admin'] = song_search
             songs = Song.query.filter(Song.name.like(f'%{song_search}%')).all()
 
-            return render_template('song_management.html', songs=songs, Admin=Admin)
+            return redirect(url_for('song_management', songs=songs, Admin=Admin))
         else:
             songs = Song.query.all()
             return render_template('song_management.html', songs=songs, Admin=Admin)
@@ -1057,7 +1056,7 @@ def remove_album(album_id):
             db.session.delete(album_song)
         db.session.commit()
         flash('Album deleted', 'info')
-        return redirect(url_for('album_management'))
+        return redirect(url_for('album_management', Admin=Admin))
 
 @app.route('/admin/user_management', methods=['GET','POST'])
 def user_management():

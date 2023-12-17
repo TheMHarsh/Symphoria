@@ -7,14 +7,69 @@
         flex-direction: row;
         justify-content: left;
         align-items: left;
-        margin: 5px 20px 50px 20px;
+        margin: 5px 20px 20px 20px;
     }
+
     .song, .album, .playlist{
-        width: 200px;
-        height: 200px;
+        width: 250px;
+        height: 250px;
         margin: 20px 20px 20px 20px;
         display: flex;
-        flex-direction: column;}
+        flex-direction: column;
+        text-decoration: none;
+        color: gray;
+    }
+
+    .song img, .album img, .playlist img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .song:hover, .album:hover, .playlist:hover {
+        text-decoration: none;
+        color: gray;
+    }
+
+    .info {
+        margin: 20px;
+    }
+
+    .info h1 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+
+    .info .recommended_songs, .info .recommended_albums, .info .recommended_playlists {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    .info .song, .info .album, .info .playlist {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 10px;
+        text-decoration: none;
+        color: gray;
+    }
+
+    .info .song:hover, .info .album:hover, .info .playlist:hover {
+        text-decoration: none;
+        color: gray;
+
+    }
+    .song-info, .album-info, .playlist-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
+    }
+    .song-info, .album-info, .playlist-info p{
+        line-height: 6px;
+    }
 {% endblock %}
 
 {% block content %}
@@ -26,7 +81,7 @@
             {% else %}
                 <input type="text" name="search" value="">
             {% endif %}
-            <button type="submit"><img src="static/magnifying-glass-solid.svg" alt=""></button>
+            <button type="submit"><img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt=""></button>
         </form>
         <a href="/profile">Profile</a>
         {% if Admin.query.filter_by(id=session['user_id']).first() %}

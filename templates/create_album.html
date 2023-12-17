@@ -4,13 +4,23 @@
 {% endblock %}
 
 {% block content %}
-    <nav class="navbar">
+        <nav class="navbar">
         <a href="/">Symphoria</a>
-        <input type="text">
+        <form action="/search" method="POST">
+            {% if session['search'] %}
+                <input type="text" name="search" value="{{ session['search'] }}">
+            {% else %}
+                <input type="text" name="search" value="">
+            {% endif %}
+            <button type="submit"><img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt=""></button>
+        </form>
         <a href="/profile">Profile</a>
+        {% if Admin.query.filter_by(id=session['user_id']).first() %}
+            <a href="/admin">Admin</a>
+        {% endif %}
         <a href="/logout">Logout</a>
     </nav>
-
+    <div class="content-container">
     <div class="menubar">
         <a href="/profile">Profile</a>
         <a href='/my_playlists'>Playlists</a>
@@ -27,7 +37,7 @@
             {% endif %}
         {% endwith %}
 
-        <form action="/my_albums/create" method="POST" enctype="multipart/form-data">
+        <form action="/my_albums/create" method="POST" enctype="multipart/form-data" class="formy">
             <input type="text" name="album_name" placeholder="Album Name" required>
 
             <label for="album_thumbnail">Album Thumbnail</label>
@@ -60,5 +70,6 @@
 
             <input type="submit" value="Add Song">
         </form>
+    </div>
     </div>
 {% endblock %}

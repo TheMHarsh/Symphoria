@@ -4,10 +4,20 @@
 {% endblock %}
 
 {% block content %}
-    <nav class="navbar">
+        <nav class="navbar">
         <a href="/">Symphoria</a>
-        <input type="text">
+        <form action="/search" method="POST">
+            {% if session['search'] %}
+                <input type="text" name="search" value="{{ session['search'] }}">
+            {% else %}
+                <input type="text" name="search" value="">
+            {% endif %}
+            <button type="submit"><img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt=""></button>
+        </form>
         <a href="/profile">Profile</a>
+        {% if Admin.query.filter_by(id=session['user_id']).first() %}
+            <a href="/admin">Admin</a>
+        {% endif %}
         <a href="/logout">Logout</a>
     </nav>
 
@@ -17,7 +27,7 @@
         <a href='/my_songs'>My Songs</a>
         <a href="/my_albums">My Albums</a>
     </div>
-
+    <div class="content-container">
     <div class="info">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -27,10 +37,11 @@
             {% endif %}
         {% endwith %}
 
-        <form action="/my_playlists/create" method="post">
+        <form action="/my_playlists/create" method="post" class="formy">
             <input type="text" name="playlist_name" placeholder="Playlist Name">
             <input type="submit" value="Add Songs to Playlist">
         </form>
 
+    </div>
     </div>
 {% endblock %}
