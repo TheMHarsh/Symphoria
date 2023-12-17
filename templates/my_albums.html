@@ -33,7 +33,7 @@
             {% if albums %}
                 {% for album in albums %}
                     <div class="album_controls">
-                            <a href="#"><h3>{{ album.name }}</h3></a>
+                            <a href="/my_albums/{{ album.id }}"><h3>{{ album.name }}</h3></a>
                             <a href="/my_albums/edit/{{ album.id }}">Edit</a>
                     </div>
                 {% endfor %}

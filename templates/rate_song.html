@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% block title %}
+    {{ song.name }}
+{% endblock %}
+
+{% block internal_css %}
+    img{
+        width: 300px;
+        height: 300px;
+    }
+{% endblock %}
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <input type="text">
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="info">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                    <div id = "flash_message">
+                        {{ messages[0] }}
+                    </div>
+            {% endif %}
+        {% endwith %}
+
+        <h1>{{ song.name }}</h1>
+        <h2>{{ song.artist.name }}</h2>
+        <img src="{{ url_for('static', filename='uploads/song_thumbnails/' + song.thumbnail) }}" alt="">
+        {% if rating %}
+            <h2>Rating: {{ rating.rating_value }}</h2>
+        {% endif %}
+        <form action="/song/{{ song.id }}/rate" method="POST">
+            <input type="radio" id="star5" name="rating" value="5" />
+            <label for="star5" title="5 stars">5 stars</label>
+            <input type="radio" id="star4" name="rating" value="4" />
+            <label for="star4" title="4 stars">4 stars</label>
+            <input type="radio" id="star3" name="rating" value="3" />
+            <label for="star3" title="3 stars">3 stars</label>
+            <input type="radio" id="star2" name="rating" value="2" />
+            <label for="star2" title="2 stars">2 stars</label>
+            <input type="radio" id="star1" name="rating" value="1" />
+            <label for="star1" title="1 star">1 star</label>
+            <button type="submit">Rate</button>
+        </form>
+    </div>
+{% endblock %}

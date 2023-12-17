@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+{% block title %}
+    {{ song.name }}
+{% endblock %}
+
+{% block internal_css %}
+    img{
+        width: 300px;
+        height: 300px;
+    }
+{% endblock %}
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <input type="text">
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="info">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                    <div id = "flash_message">
+                        {{ messages[0] }}
+                    </div>
+            {% endif %}
+        {% endwith %}
+
+        <h1>{{ song.name }}</h1>
+        <h2>{{ song.artist.name }}</h2>
+        <img src="{{ url_for('static', filename='uploads/song_thumbnails/' + song.thumbnail) }}" alt="">
+        {% if song.lyrics == '' %}
+            <textarea name="" id="" cols="30" rows="10">Lyrics not available</textarea>
+        {% else %}
+            <textarea name="" id="" cols="30" rows="10">{{ song.lyrics }}</textarea>
+        {% endif %}
+        <audio controls>
+            <source src="{{ url_for('static', filename='uploads/audio/' + song.music_src) }}" type="audio/mpeg">
+        </audio>
+        <a href="/song/{{ song.id }}/rate"><button>Rate</button></a>
+    </div>
+{% endblock %}

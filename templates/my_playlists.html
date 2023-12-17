@@ -26,14 +26,14 @@
             {% endif %}
         {% endwith %}
 
-        <a href="#" class="add_playlists">Add Playlists</a>
+        <a href="/my_playlists/create" class="add_playlists">Add Playlists</a>
 
         <h1>Your Playlists</h1>
         {% if playlists %}
             {% for playlist in playlists %}
                 <div class="playlist_controls">
-                        <a href="#"><h3>{{ playlists.title }}</h3></a>
-                        <a href="#">Edit</a>
+                        <a href="/my_playlists/{{ playlist.id }}"><h3>{{ playlist.name }}</h3></a>
+                        <a href="/my_playlists/edit/{{ playlist.id }}">Edit</a>
                 </div>
             {% endfor %}
         {% else %}

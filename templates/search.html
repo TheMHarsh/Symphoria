@@ -1,0 +1,87 @@
+{% extends 'layout.html' %}
+
+{% block internal_css %}
+
+{% endblock %}
+
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <form action="/search" method="POST">
+            {% if session['search'] %}
+                <input type="text" name="search" value="{{ session['search'] }}">
+            {% else %}
+                <input type="text" name="search" value="">
+            {% endif %}
+
+            <button type="submit">
+                <img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt="">
+            </button>
+        </form>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <form action="/search/filter" method="POST">
+        <label for="type">Type</label>
+        <select name="type" id="type">
+            <option value="All" {% if session['s_type'] == 'All'%} selected{% endif %}>All</option>
+            <option value="Song" {% if session['s_type'] == 'Song'%} selected{% endif %}>Song</option>
+            <option value="Album" {% if session['s_type'] == 'Album'%} selected{% endif %}>Album</option>
+        </select>
+
+        <label for="genre">Genre</label>
+        <select id="genre" name="genre" required>
+            <option value="All" selected>All</option>
+            <option value="pop" {% if session['s_genre'] == "pop" %} selected {% endif %}>Pop</option>
+            <option value="rock" {% if session['s_genre'] == "rock" %} selected {% endif %}>Rock</option>
+            <option value="hip-hop" {% if session['s_genre'] == "hip-hop" %} selected {% endif %}>Hip-Hop/Rap</option>
+            <option value="country" {% if session['s_genre'] == "country" %} selected {% endif %}>Country</option>
+            <option value="electronic" {% if session['s_genre'] == "electronic" %} selected {% endif %}>Electronic/Dance</option>
+            <option value="jazz" {% if session['s_genre'] == "jazz" %} selected {% endif %}>Jazz</option>
+            <option value="blues" {% if session['s_genre'] == "blues" %} selected {% endif %}>Blues</option>
+            <option value="rnb" {% if session['s_genre'] == "rnb" %} selected {% endif %}>R&B (Rhythm and Blues)</option>
+            <option value="reggae" {% if session['s_genre'] == "reggae" %} selected {% endif %}>Reggae</option>
+            <option value="classical" {% if session['s_genre'] == "classical" %} selected {% endif %}>Classical</option>
+            <option value="metal" {% if session['s_genre'] == "metal" %} selected {% endif %}>Heavy Metal</option>
+            <option value="indie" {% if session['s_genre'] == "indie" %} selected {% endif %}>Indie/Alternative</option>
+            <option value="folk" {% if session['s_genre'] == "folk" %} selected {% endif %}>Folk</option>
+            <option value="world" {% if session['s_genre'] == "world" %} selected {% endif %}>World Music</option>
+            <option value="gospel" {% if session['s_genre'] == "gospel" %} selected {% endif %}>Gospel</option>
+            <option value="punk" {% if session['s_genre'] == "punk" %} selected {% endif %}>Punk</option>
+            <option value="soul" {% if session['s_genre'] == "soul" %} selected {% endif %}>Soul</option>
+            <option value="funk" {% if session['s_genre'] == "funk" %} selected {% endif %}>Funk</option>
+            <option value="disco" {% if session['s_genre'] == "disco" %} selected {% endif %}>Disco</option>
+            <option value="bluegrass" {% if session['s_genre'] == "bluegrass" %} selected {% endif %}>Bluegrass</option>
+        </select>
+
+        <button type="submit">Filter</button>
+    </form>
+
+
+    <div class="info">
+        <h1>Search Results</h1>
+
+        {% for song in songs %}
+            <a href="/song/{{ song.id }}">
+                <div class="song">
+                    <p>{{ song.name }}</p>
+                    <p>{{ song.artist.name }}</p>
+                    <p>{{ song.genre }}</p>
+                    <p>Song</p>
+                </div>
+            </a>
+        {% endfor %}
+
+        {% for album in albums %}
+            <a href="/album/{{ album.id }}">
+                <div class="album">
+                    <p>{{ album.name }}</p>
+                    <p>{{ album.artist.name }}</p>
+                    <p>{{ album.genre }}</p>
+                    <p>Album</p>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}

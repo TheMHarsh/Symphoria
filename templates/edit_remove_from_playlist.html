@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% block title %}
-    {{ album.name }} Songs
+    Edit - Remove Song from Playlist
 {% endblock %}
 
 {% block content %}
@@ -27,13 +27,14 @@
             {% endif %}
         {% endwith %}
 
-        <h1>{{ album.name }} Songs</h1>
-        {% for song in songs %}
-            <div class="song">
-                <a href="#">{{ song.name }}</a>
-                <a href="/my_albums/{{ album.id }}/remove_song/{{ song.id }}">Remove</a>
-            </div>
-        {% endfor %}
+        <h1>Remove Song from Playlist</h1>
 
+        <form action="{{ url_for('edit_remove_from_playlist', playlist_id=playlist_id) }}"  method="POST">
+            {% for song in songs %}
+                <input type="checkbox" name="song" value="{{ song.id }}">
+                <label for="song">{{ song.name }}</label><br>
+            {% endfor %}
+            <input type="submit" value="Remove Songs from Playlist">
+        </form>
     </div>
 {% endblock %}

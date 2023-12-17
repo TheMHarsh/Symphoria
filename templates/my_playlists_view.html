@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% block title %}
-    {{ album.name }} Songs
+    {{ playlist.name }} Songs
 {% endblock %}
 
 {% block content %}
@@ -27,11 +27,11 @@
             {% endif %}
         {% endwith %}
 
-        <h1>{{ album.name }} Songs</h1>
+        <h1>{{ playlist.name }} Songs</h1>
         {% for song in songs %}
             <div class="song">
                 <a href="#">{{ song.name }}</a>
-                <a href="/my_albums/{{ album.id }}/remove_song/{{ song.id }}">Remove</a>
+                <a href="/my_playlists/{{ playlist.id }}/remove_song/{{ song.id }}">Remove</a>
             </div>
         {% endfor %}
 

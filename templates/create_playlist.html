@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% block title %}
-    {{ album.name }} Songs
+    Create Playlists
 {% endblock %}
 
 {% block content %}
@@ -27,13 +27,10 @@
             {% endif %}
         {% endwith %}
 
-        <h1>{{ album.name }} Songs</h1>
-        {% for song in songs %}
-            <div class="song">
-                <a href="#">{{ song.name }}</a>
-                <a href="/my_albums/{{ album.id }}/remove_song/{{ song.id }}">Remove</a>
-            </div>
-        {% endfor %}
+        <form action="/my_playlists/create" method="post">
+            <input type="text" name="playlist_name" placeholder="Playlist Name">
+            <input type="submit" value="Add Songs to Playlist">
+        </form>
 
     </div>
 {% endblock %}

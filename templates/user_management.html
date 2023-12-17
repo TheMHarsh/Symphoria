@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+{% block title %}
+    User Management
+{% endblock %}
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <form action="/search" method="POST">
+            {% if session['search'] %}
+                <input type="text" name="search" value="{{ session['search'] }}">
+            {% else %}
+                <input type="text" name="search" value="">
+            {% endif %}
+            <button type="submit"><img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt=""></button>
+        </form>
+        <a href="/profile">Profile</a>
+        {% if Admin.query.filter_by(id=session['user_id']).first() %}
+            <a href="/admin">Admin</a>
+        {% endif %}
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="menubar">
+        <a href="/admin">Dashboard</a>
+        <a href='/admin/song_management'>Song Management</a>
+        <a href='/admin/album_management'>Album Management</a>
+        <a href="/admin/user_management">User Management</a>
+    </div>
+
+    <div class="info">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                    <div id = "flash_message">
+                        {{ messages[0] }}
+                    </div>
+            {% endif %}
+        {% endwith %}
+
+        <h2>User Management</h2>
+        <form method="POST">
+            {% if session['user_search_admin'] %}
+                <input type="text" name="user_search" value="{{ session['user_search_admin'] }}">
+            {% else %}
+                <input type="text" name="user_search" value="">
+            {% endif %}
+            <button type="submit"><img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt=""></button>
+        </form>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.role }}</td>
+                    <td><a href="/blacklist/user/{{ user.id }}">Blacklist User</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% block title %}
-    {{ album.name }} Songs
+    {{ album.name }}
 {% endblock %}
 
 {% block content %}
@@ -10,13 +10,6 @@
         <a href="/profile">Profile</a>
         <a href="/logout">Logout</a>
     </nav>
-
-    <div class="menubar">
-        <a href="/profile">Profile</a>
-        <a href='/my_playlists'>Playlists</a>
-        <a href='/my_songs'>My Songs</a>
-        <a href="/my_albums">My Albums</a>
-    </div>
 
     <div class="info">
         {% with messages = get_flashed_messages() %}
@@ -31,7 +24,7 @@
         {% for song in songs %}
             <div class="song">
                 <a href="#">{{ song.name }}</a>
-                <a href="/my_albums/{{ album.id }}/remove_song/{{ song.id }}">Remove</a>
+
             </div>
         {% endfor %}
 

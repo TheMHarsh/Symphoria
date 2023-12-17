@@ -1,0 +1,74 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Album Management
+{% endblock %}
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <form action="/search" method="POST">
+            {% if session['search'] %}
+                <input type="text" name="search" value="{{ session['search'] }}">
+            {% else %}
+                <input type="text" name="search" value="">
+            {% endif %}
+            <button type="submit"><img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt=""></button>
+        </form>
+        <a href="/profile">Profile</a>
+        {% if Admin.query.filter_by(id=session['user_id']).first() %}
+            <a href="/admin">Admin</a>
+        {% endif %}
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="menubar">
+        <a href="/admin">Dashboard</a>
+        <a href='/admin/song_management'>Song Management</a>
+        <a href='/admin/album_management'>Album Management</a>
+        <a href="/admin/user_management">User Management</a>
+    </div>
+
+    <div class="info">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                    <div id = "flash_message">
+                        {{ messages[0] }}
+                    </div>
+            {% endif %}
+        {% endwith %}
+
+        <h2>Album Management</h2>
+        <form method="POST">
+            {% if session['album_search_admin'] %}
+                <input type="text" name="album_search" value="{{ session['album_search_admin'] }}">
+            {% else %}
+                <input type="text" name="album_search" value="">
+            {% endif %}
+            <button type="submit"><img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt=""></button>
+        </form>
+
+        <table>
+            <tr>
+                <th>Album ID</th>
+                <th>Album Name</th>
+                <th>Artist</th>
+                <th>Artist Username</th>
+                <th>Genre</th>
+                <th>Release Date</th>
+                <th>View</th>
+                <th>Remove</th>
+            </tr>
+            {% for album in albums %}
+                <tr>
+                    <td>{{ album.id }}</td>
+                    <td>{{ album.name }}</td>
+                    <td>{{ album.artist.name }}</td>
+                    <td>{{ album.artist.username }}</td>
+                    <td>{{ album.genre }}</td>
+                    <td>{{ album.release_date }}</td>
+                    <td><a href="/album/{{ album.id }}">View</a></td>
+                    <td><a href="/remove/album/{{ album.id }}">Remove</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% block title %}
-    Login
+    Admin Login
 {% endblock %}
 {% block content %}
     {% with messages = get_flashed_messages() %}
@@ -11,13 +11,13 @@
         {% endif %}
     {% endwith %}
     <a href="/">Symphoria</a>
-    <p>Log In to start listening</p>
-    <form action="/login" method="post">
+    <p>Admin Login</p>
+    <form action="/admin_login" method="post">
         <input type="text" name="username" id="username" placeholder="Username">
         <input type="password" name="password" id="password" placeholder="Password">
         <input type="submit" value="Log In">
     </form>
 
-    <a href="/signup">Don't have an account? Sign Up here.</a><br>
-    <a href="/admin_login">Admin Login</a>
+    <a href="/signup">Don't have an account? Sign Up here.</a>
+    <a href="/login">Not an Admin? Login Here</a>
 {% endblock %}

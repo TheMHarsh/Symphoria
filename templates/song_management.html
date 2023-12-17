@@ -1,0 +1,74 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Song Management
+{% endblock %}
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <form action="/search" method="POST">
+            {% if session['search'] %}
+                <input type="text" name="search" value="{{ session['search'] }}">
+            {% else %}
+                <input type="text" name="search" value="">
+            {% endif %}
+            <button type="submit"><img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt=""></button>
+        </form>
+        <a href="/profile">Profile</a>
+        {% if Admin.query.filter_by(id=session['user_id']).first() %}
+            <a href="/admin">Admin</a>
+        {% endif %}
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="menubar">
+        <a href="/admin">Dashboard</a>
+        <a href='/admin/song_management'>Song Management</a>
+        <a href='/admin/album_management'>Album Management</a>
+        <a href="/admin/user_management">User Management</a>
+    </div>
+
+    <div class="info">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                    <div id = "flash_message">
+                        {{ messages[0] }}
+                    </div>
+            {% endif %}
+        {% endwith %}
+
+        <h2>Song Management</h2>
+        <form method="POST">
+            {% if session['song_search_admin'] %}
+                <input type="text" name="song_search" value="{{ session['song_search_admin'] }}">
+            {% else %}
+                <input type="text" name="song_search" value="">
+            {% endif %}
+            <button type="submit"><img src="{{ url_for('static', filename='magnifying-glass-solid.svg') }}" alt=""></button>
+        </form>
+
+        <table>
+            <tr>
+                <th>Song ID</th>
+                <th>Song Name</th>
+                <th>Artist</th>
+                <th>Artist Username</th>
+                <th>Genre</th>
+                <th>Release Date</th>
+                <th>Play</th>
+                <th>Remove</th>
+            </tr>
+            {% for song in songs %}
+                <tr>
+                    <td>{{ song.id }}</td>
+                    <td>{{ song.name }}</td>
+                    <td>{{ song.artist.name }}</td>
+                    <td>{{ song.artist.username }}</td>
+                    <td>{{ song.genre }}</td>
+                    <td>{{ song.release_date }}</td>
+                    <td><a href="/song/{{ song.id }}">Play</a></td>
+                    <td><a href="/remove/song/{{ song.id }}">Remove</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

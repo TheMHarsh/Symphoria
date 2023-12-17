@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Edit {{ playlist.name }}
+{% endblock %}
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <input type="text">
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="menubar">
+        <a href="/profile">Profile</a>
+        <a href='/my_playlists'>Playlists</a>
+        <a href='/my_songs'>My Songs</a>
+        <a href="/my_albums">My Albums</a>
+    </div>
+
+    <div class="info">
+        <h1>Edit</h1>
+        <form action="/my_playlists/edit/{{ playlist.id }}" method="POST">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" value="{{ playlist.name }}" required>
+
+            <a href="/my_playlists/edit/{{ playlist.id }}/add_song">Add Songs to Albums</a>
+            <a href="/my_playlists/edit/{{ playlist.id }}/remove_song">Remove Songs from Albums</a>
+
+            <a href="/my_playlists/delete/{{ playlist.id }}">Delete Album</a>
+
+            <button type="submit">Update</button>
+        </form>
+    </div>
+{% endblock %}

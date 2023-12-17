@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Admin Dashboard
+{% endblock %}
+{% block content %}
+    <nav class="navbar">
+        <a href="/">Symphoria</a>
+        <form action="/search" method="POST">
+            {% if session['search'] %}
+                <input type="text" name="search" value="{{ session['search'] }}">
+            {% else %}
+                <input type="text" name="search" value="">
+            {% endif %}
+            <button type="submit"><img src="static/magnifying-glass-solid.svg" alt=""></button>
+        </form>
+        <a href="/profile">Profile</a>
+        {% if Admin.query.filter_by(id=session['user_id']).first() %}
+            <a href="/admin">Admin</a>
+        {% endif %}
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <div class="menubar">
+        <a href="/admin">Dashboard</a>
+        <a href='/admin/song_management'>Song Management</a>
+        <a href='/admin/album_management'>Album Management</a>
+        <a href="/admin/user_management">User Management</a>
+    </div>
+
+    <div class="info">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                    <div id = "flash_message">
+                        {{ messages[0] }}
+                    </div>
+            {% endif %}
+        {% endwith %}
+
+        <h1>No. of Songs : {{ songs|length }}</h1>
+        <h1>No. of Albums : {{ albums|length }}</h1>
+        <h1>No. of Users : {{ users|length }}</h1>
+        <h1>No. of Creators : {{ users|selectattr("role", "equalto", "Creator")|list|length }}</h1>
+
+        <label for="top_songs">Top Songs</label>
+        <img src = "{{ url_for('static', filename = 'graphs/top_songs.png') }}" alt="" id="top_songs" >
+
+        <label for="top_creators">Top Creators</label>
+        <img src = "{{ url_for('static', filename = 'graphs/top_creators.png') }}" alt="" id="top_creators" >
+
+        <label for="user_roles">User Roles</label>
+        <img src = "{{ url_for('static', filename = 'graphs/user_roles.png') }}" alt="" id="user_roles" >
+    </div>
+{% endblock %}
