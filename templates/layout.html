@@ -9,10 +9,7 @@
     </title>
 
 
-    <style>
-        {% block internal_css %}
-        {% endblock %}
-    </style>
+
 
     <style>
         .navbar {
@@ -101,12 +98,17 @@
     .formy {
         display: flex;
         flex-direction: column;
-        align-items: left;
+        justify-content: left;
     }
     .formy input, .formy button {
         width: 200px;
     }
 
+    </style>
+
+    <style>
+        {% block internal_css %}
+        {% endblock %}
     </style>
 
     {% block stylesheets %}

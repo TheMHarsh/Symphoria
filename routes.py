@@ -8,8 +8,6 @@ from sqlalchemy.sql.expression import func
 import matplotlib.pyplot as plt
 from functools import wraps
 
-
-
 MAX_FILE_SIZE = 10 * 1024 * 1024
 
 def is_blacklist(f):
@@ -1096,4 +1094,16 @@ def blacklist(user_id):
         user.blacklist = True
         db.session.commit()
         flash('User blacklisted', 'info')
+        return redirect(url_for('user_management'))
+
+@app.route('/unblacklist/user/<user_id>')
+def unblacklist(user_id):
+    if 'user_id' not in session or (Admin.query.filter_by(id=session['user_id']).first() is None):
+        flash('Please log in', 'info')
+        return redirect(url_for('admin_login'))
+    else:
+        user = User.query.filter_by(id=user_id).first()
+        user.blacklist = False
+        db.session.commit()
+        flash('User unblacklisted', 'info')
         return redirect(url_for('user_management'))

@@ -8,6 +8,16 @@
         width: 300px;
         height: 300px;
     }
+    textarea{
+        width: 300px;
+        height: 300px;
+    }
+    .thumbly{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+    }
 {% endblock %}
 {% block content %}
         <nav class="navbar">
@@ -38,12 +48,14 @@
 
         <h1>{{ song.name }}</h1>
         <h2>{{ song.artist.name }}</h2>
-        <img src="{{ url_for('static', filename='uploads/song_thumbnails/' + song.thumbnail) }}" alt="">
-        {% if song.lyrics == '' %}
-            <textarea name="" id="" cols="30" rows="10">Lyrics not available</textarea>
-        {% else %}
-            <textarea name="" id="" cols="30" rows="10">{{ song.lyrics }}</textarea>
-        {% endif %}
+        <div class="thumbly">
+            <img src="{{ url_for('static', filename='uploads/song_thumbnails/' + song.thumbnail) }}" alt="">
+            {% if song.lyrics == '' %}
+                <textarea name="" id="" cols="30" rows="10">Lyrics not available</textarea>
+            {% else %}
+                <textarea name="" id="" cols="30" rows="10">{{ song.lyrics }}</textarea>
+            {% endif %}
+        </div>
         <audio controls>
             <source src="{{ url_for('static', filename='uploads/audio/' + song.music_src) }}" type="audio/mpeg">
         </audio>

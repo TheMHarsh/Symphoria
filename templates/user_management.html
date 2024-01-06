@@ -60,7 +60,13 @@
                     <td>{{ user.username }}</td>
                     <td>{{ user.name }}</td>
                     <td>{{ user.role }}</td>
-                    <td><a href="/blacklist/user/{{ user.id }}">Blacklist User</a></td>
+                    <td>
+                        {% if user.blacklist == 0 %}
+                            <a href="/blacklist/user/{{ user.id }}">Blacklist User</a>
+                        {% else %}
+                            <a href="/unblacklist/user/{{ user.id }}">Unblacklist User</a>
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
         </table>
